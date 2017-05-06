@@ -1,13 +1,17 @@
 import { Injectable }    from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import { APIURL } from './config/config';
 
 import 'rxjs/add/operator/toPromise';
 
 import { ChartRepo } from './chart-repo';
+import { Chart } from './chart';
+import { Release } from './release';
 
 @Injectable()
 export class ChartRepoService {
-  private reposUrl = 'http://104.197.249.14/repos';  // URL to web api
+
+  private reposUrl = APIURL + '/repos';
 
   constructor(private http: Http) { }
 
@@ -17,6 +21,14 @@ export class ChartRepoService {
                .then(response => response.json() as ChartRepo[])
                .catch(this.handleError);
   }
+
+  getRepoCharts(name: string): Promise<Chart[]> {
+    return this.http.get(this.reposUrl+'/'+name+'/charts')
+               .toPromise()
+               .then(response => response.json() as Chart[])
+               .catch(this.handleError);
+  }
+
 
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error); // for demo purposes only
@@ -39,5 +51,29 @@ export class ChartRepoService {
       .then(res => res.json() as ChartRepo)
       .catch(this.handleError);
   }
+
+  install(chart: string, repo: string): Promise<Release> {
+    return this.http
+      .post(this.reposUrl+'/'+repo+'/charts/'+chart+'/install', JSON.stringify({name: name}), {headers: this.headers})
+      .toPromise()
+      .then(res => res.json() as Release)
+      .catch(this.handleError);
+  }
+
+  delete(name: string): Promise<ChartRepo> {
+    return this.http
+      .delete(this.reposUrl + '/'+name)
+      .toPromise()
+      .then(res => res.json() as ChartRepo)
+      .catch(this.handleError);
+  }
+
+  search(repo: string, term: string): Promise<Chart[]> {
+    return this.http.get(this.reposUrl+'/'+repo+'/charts?name='+ term)
+               .toPromise()
+               .then(response => response.json() as Chart[])
+               .catch(this.handleError);
+  }
+
 
 }

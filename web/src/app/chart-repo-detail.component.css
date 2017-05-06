@@ -1,0 +1,16 @@
+
+h3 {
+  font-size: 1.4em;
+  padding: 0.8em 0.5em 0 0.5em;
+  line-height: 1em;
+  left: -1px;
+  top: -4px;
+  height: 1.8em;
+  margin-right: .8em;
+  width: 10em;
+}
+
+.chart-icon img {
+  max-width: 10em;
+
+}

@@ -1,18 +1,27 @@
 import { Injectable }    from '@angular/core';
 import { Headers, Http } from '@angular/http';
-
 import 'rxjs/add/operator/toPromise';
+import { APIURL } from './config/config';
 
+import { Response } from './response';
 import { Release } from './release';
 
 @Injectable()
 export class ReleaseService {
-  private reposUrl = 'http://104.197.249.14/releases';  // URL to web api
+
+  private releasesUrl = APIURL + '/releases';
 
   constructor(private http: Http) { }
 
   getReleases(): Promise<Release[]> {
-    return this.http.get(this.reposUrl)
+    return this.http.get(this.releasesUrl)
+               .toPromise()
+               .then(response => response.json() as Release[])
+               .catch(this.handleError);
+  }
+
+  getChartReleases(name: string): Promise<Release[]> {
+    return this.http.get(this.releasesUrl+"?chart="+name)
                .toPromise()
                .then(response => response.json() as Release[])
                .catch(this.handleError);
@@ -32,6 +41,20 @@ export class ReleaseService {
 
   private headers = new Headers({'Content-Type': 'application/json'});
 
+  delete(name: string): Promise<Response> {
+    return this.http
+      .delete(this.releasesUrl + '/'+name)
+      .toPromise()
+      .then(res => res.json() as Response)
+      .catch(this.handleError);
+  }
 
+  updateValues(name: string, data: string): Promise<Response> {
+    return this.http
+      .patch(this.releasesUrl + '/'+name, JSON.stringify({data: data}), {headers: this.headers})
+      .toPromise()
+      .then(res => res.json() as Response)
+      .catch(this.handleError);
+  }
 
 }

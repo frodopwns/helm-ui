@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+
 
 import { ChartRepo } from './chart-repo';
 
@@ -11,10 +14,14 @@ import { ChartRepoService } from './chart-repo.service';
 })
 export class ChartReposComponent implements OnInit {
 
-  repos: ChartRepo[] = [];
+  repos: ChartRepo[];
   selectedRepo: ChartRepo;
 
-  constructor(private chartRepoService: ChartRepoService) { }
+  constructor(
+    private chartRepoService: ChartRepoService,
+    private router: Router,
+    private location: Location
+  ) { }
 
   ngOnInit(): void {
     this.chartRepoService.getRepos()
@@ -25,13 +32,30 @@ export class ChartReposComponent implements OnInit {
     this.selectedRepo = chartRepo;
   }
 
+  gotoDetail(chartRepo: ChartRepo): void {
+    this.router.navigate(['/chart-repos/detail', chartRepo.name]);
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
   add(name: string, url: string): void {
     name = name.trim();
     if (!name) { return; }
     this.chartRepoService.create(name, url)
       .then(repo => {
+        if (!this.repos) this.repos = [];
         this.repos.push(repo);
-        this.selectedRepo = null;
+      });
+  }
+
+  delete(name: string): void {
+    name = name.trim();
+    if (!name) { return; }
+    this.chartRepoService.delete(name)
+      .then(repo => {
+        this.repos = this.repos.filter(rep => rep.name !== name)
       });
   }
 
