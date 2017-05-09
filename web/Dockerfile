@@ -1,32 +1,21 @@
-FROM alpine:3.5
+FROM node:boron
 
-ARG plugins=http.cors,http.ipfilter,http.minify
-ARG BUILD_DATE
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-RUN apk upgrade --no-cache --available \
-  && apk add --no-cache \
-    bash \
-    ca-certificates \
-    curl \
-    libressl \
-    openssh-client \
-    tar \
-  && adduser -D -u 1000 caddy
+# Install app dependencies
+COPY package.json /usr/src/app/
+RUN npm install
 
-RUN curl --silent --show-error --fail --location \
-      --header "Accept: application/tar+gzip, application/x-gzip, application/octet-stream" -o - \
-      "https://caddyserver.com/download/linux/amd64?plugins=${plugins}" \
-    | tar --no-same-owner -C /usr/bin/ -xz caddy \
- && chmod 0755 /usr/bin/caddy \
- && /usr/bin/caddy -version
+# Copy node modules for hopeful reuse
+COPY ./node_modules /usr/src/app/node_modules
 
-COPY . /
+# Bundle app source
+COPY . /usr/src/app/
 
-EXPOSE 2015
-
-USER caddy
-ENTRYPOINT ["/usr/bin/caddy"]
-CMD ["--conf", "/etc/Caddyfile", "--log", "stdout"]
+EXPOSE 8080
+CMD [ "npm", "start" ]
 
 ARG VERSION
 ARG BUILD_DATE

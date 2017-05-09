@@ -1,9 +1,0 @@
-/ {
-    gzip
-    root /src
-}
-
-/node_modules/ {
-    root /node_modules/
-    browse
-}
