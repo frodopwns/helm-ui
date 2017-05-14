@@ -93,10 +93,9 @@ export class ReleaseControlsComponent implements OnInit {
   }
 
  getDiff(name: string, revision: number): void {
-    if (!name || !revision) { return; }
+    if (!name) { return; }
     this.releaseService.diff(name, revision)
       .then(response => {
-        console.log(response);
         this.openDiffDialog(response.diff);
       });
  }

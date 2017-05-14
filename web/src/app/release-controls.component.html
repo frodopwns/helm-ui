@@ -40,7 +40,7 @@
           <td>{{ release.chart.metadata.name }}</td>
           <td>{{ release.info.Description}}</td> 
           <td>
-            <button *ngIf="release.info.status.code != 1" md-button (click)="getDiff(release.name, i+1)">
+            <button *ngIf="release.info.status.code != 1" md-button (click)="getDiff(release.name, (oldReleases.length - 1) - i)">
               <md-icon>compare</md-icon> Diff
             </button>
             <button *ngIf="release.info.status.code != 1" md-button (click)="loading=true;rollback(release.name, i+1)">
