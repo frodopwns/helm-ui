@@ -23,9 +23,10 @@ comp-bar {
   position: relative;
 }
 
-md-spinner {
-  width: 2em;
-  height: 2em;
+md-icon.status-flag {
   display: inline-block;
-  float: right;
+}
+
+.green md-icon {
+  color: green;
 }

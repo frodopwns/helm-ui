@@ -7,10 +7,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/ericchiang/k8s"
 	"github.com/gorilla/mux"
+	"github.com/sergi/go-diff/diffmatchpatch"
 	"k8s.io/helm/pkg/downloader"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/helm/helmpath"
@@ -79,7 +82,7 @@ func (c ServerContext) ReleaseHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Printf("failed to get release: %s", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-
+				return
 			}
 
 			statusResp, err := c.helmClient.ReleaseStatus(resp.Release.Name)
@@ -98,7 +101,14 @@ func (c ServerContext) ReleaseHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// get all releases
-		releases, err := c.helmClient.ListReleases()
+		stats := []release.Status_Code{
+			//release.Status_UNKNOWN,
+			release.Status_DEPLOYED,
+			//release.Status_DELETED,
+			//release.Status_DELETING,
+			release.Status_FAILED,
+		}
+		releases, err := c.helmClient.ListReleases(helm.ReleaseListStatuses(stats))
 		if err != nil {
 			log.Printf("failed to list releases: %v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -140,6 +150,124 @@ func (c ServerContext) ReleaseHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	case "OPTIONS":
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
+}
+
+func (c ServerContext) ReleaseHistoryHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	switch r.Method {
+	case "GET":
+		_, ok := vars["release"]
+		if ok {
+			// helm does not seem to like to run this comman din paralell
+			cli := helm.NewClient(helm.Host(os.Getenv("TILLER_HOST")))
+			resp, err := cli.ReleaseHistory(vars["release"], helm.WithMaxHistory(256))
+			if err != nil {
+				log.Printf("failed to get release history: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			err = json.NewEncoder(w).Encode(resp.Releases)
+			if err != nil {
+				log.Printf("failed to write json: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}
+		return
+	case "OPTIONS":
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
+}
+
+func (c ServerContext) ReleaseRevertHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	switch r.Method {
+	case "POST":
+		_, ok := vars["release"]
+		if ok {
+			_, ok := vars["revision"]
+			if !ok {
+				return
+			}
+			version, err := strconv.Atoi(vars["revision"])
+			if err != nil {
+				log.Printf("failed to get revision: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			resp, err := c.helmClient.RollbackRelease(
+				vars["release"],
+				helm.RollbackDryRun(false),
+				helm.RollbackRecreate(false),
+				helm.RollbackDisableHooks(false),
+				helm.RollbackVersion(int32(version)),
+				helm.RollbackTimeout(300),
+				helm.RollbackWait(false),
+			)
+			if err != nil {
+				log.Printf("failed to revert release: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			err = json.NewEncoder(w).Encode(resp.Release)
+			if err != nil {
+				log.Printf("failed to write json: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}
+		return
+	case "OPTIONS":
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
+}
+
+func (c ServerContext) ReleaseDiffHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	switch r.Method {
+	case "GET":
+		_, ok := vars["release"]
+		if ok {
+			_, ok := vars["revision"]
+			if !ok {
+				return
+			}
+			version, err := strconv.Atoi(vars["revision"])
+			if err != nil {
+				log.Printf("failed to get revision: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			// helm does not seem to like to run this comman din paralell
+			cli := helm.NewClient(helm.Host(os.Getenv("TILLER_HOST")))
+			histResp, err := cli.ReleaseHistory(vars["release"], helm.WithMaxHistory(256))
+			if err != nil {
+				log.Printf("failed to get release history: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			resp, err := c.helmClient.ReleaseContent(vars["release"])
+			if err != nil {
+				log.Printf("failed to get release: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			dmp := diffmatchpatch.New()
+			diffs := dmp.DiffMain(resp.Release.Config.Raw, histResp.Releases[version].Config.Raw, false)
+
+			err = json.NewEncoder(w).Encode(map[string]string{"diff": dmp.DiffPrettyHtml(diffs)})
+			if err != nil {
+				log.Printf("failed to write json: %s", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}
+		return
+	case "OPTIONS":
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 	}
 }

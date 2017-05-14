@@ -27,12 +27,20 @@ export class ReleaseService {
                .catch(this.handleError);
   }
 
+  getReleaseHistory(name: string): Promise<Release[]> {
+    return this.http.get(this.releasesUrl + "/" + name + "/history")
+               .toPromise()
+               .then(response => response.json() as Release[])
+               .catch(this.handleError);
+  }
+
   getChartReleases(name: string): Promise<Release[]> {
     return this.http.get(this.releasesUrl+"?chart="+name)
                .toPromise()
                .then(response => response.json() as Release[])
                .catch(this.handleError);
   }
+
 
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error); // for demo purposes only
@@ -51,6 +59,22 @@ export class ReleaseService {
   delete(name: string): Promise<Response> {
     return this.http
       .delete(this.releasesUrl + '/'+name)
+      .toPromise()
+      .then(res => res.json() as Response)
+      .catch(this.handleError);
+  }
+
+  rollback(name: string, revision: number): Promise<Release> {
+    return this.http
+      .post(this.releasesUrl+'/'+name+'/rollback/' + revision, JSON.stringify({name: name}), {headers: this.headers})
+      .toPromise()
+      .then(res => res.json() as Release)
+      .catch(this.handleError);
+  }
+
+  diff(name: string, revision: number): Promise<Response> {
+    return this.http
+      .get(this.releasesUrl+'/'+name+'/diff/' + revision, {headers: this.headers})
       .toPromise()
       .then(res => res.json() as Response)
       .catch(this.handleError);
