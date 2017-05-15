@@ -27,3 +27,16 @@ div.persistentvolumeclaim {
 div.secret {
   background-color: black;
 }
+div.daemonset {
+  background-color: cyan;
+}
+
+div.job,
+div.namespace,
+div.pod,
+div.replicaset,
+div.serviceaccount,
+div.statefulset,
+div.thirdpartyresource {
+  background-color:  grey;
+}
