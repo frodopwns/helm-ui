@@ -18,7 +18,12 @@ export class ReleasesComponent implements OnInit {
   ) { }
 
   getReleases(): void {
-    this.releaseService.getReleases().then(releases => this.releases = releases);
+    this.releaseService.getReleases().then(
+        releases => {
+            this.releases = releases;
+            this.selectedRelease = releases[0];
+        }
+    );
   }
 
   ngOnInit(): void {
