@@ -101,6 +101,7 @@ export class ReleaseControlsComponent implements OnInit {
  }
 
  openDiffDialog(diff: string) {
+   if (!diff) { diff = '<span>No change.</span>';}
     const dialogRef = this._dialog.open(DiffDialogComponent, {
       data: diff,
     });
@@ -165,9 +166,7 @@ export class DialogContentComponent {
 
 @Component({
   template: `
-    <div [innerHTML]="data | safe: 'html'" class="diff-content">
-      {{ data }}
-    </div>
+    <div [innerHTML]="data | safe: 'html'" class="diff-content"></div>
     <button color="accent" md-button (click)="dialogRef.close()">
       <md-icon>cancel</md-icon> cancel
     </button>
