@@ -1,20 +1,24 @@
-<md-card>
+
+    <md-list class="releases">
+      <md-list-item 
+        *ngFor="let release of releases"
+        (click)="selectedRelease=release;">
+        <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon> 
+        {{release.name}} - ({{release.chart.metadata.name}}) 
+        <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+
+        <label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}
+
+        <release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+      </md-list-item>
+    </md-list>
+
+
+<md-card *ngIf="selectedRelease">
   <md-card-content>
-    <h2>Dashboard</h2>
+    <release [release]="selectedRelease" [releases]="releases"></release>
   </md-card-content>
 </md-card>
-<md-card class="releases" *ngFor="let release of releases">
-  <md-card-content>
-    <h3>{{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></h3><md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
-
-    <comp-bar [templates]="release.chart.templates"></comp-bar>
-    <div><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</div>
-    <p>{{release.chart.metadata.description}}</p>
-
-    <release-controls [ParentReleases]="releases" [releaseName]="release.name" (outputEvent)= "onComponentChange($event)"></release-controls>
-  </md-card-content>
-</md-card>
-
 
 <span class="app-action">
   <a routerLink="/chart-repos">

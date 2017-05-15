@@ -1,55 +1,16 @@
-<button color="primary" md-button (click)="toggleShowNotes();">
-    <md-icon>event_note</md-icon>&nbsp;Notes
+<button md-icon-button (click)="$event.stopPropagation();" [mdMenuTriggerFor]="menu">
+  <md-icon>more_vert</md-icon>
 </button>
-<button disabled="false" color="primary" md-button (click)="toggleShowHistory();">
-    <md-icon>history</md-icon>&nbsp;History
-</button>
-<button color="primary" md-button (click)="openEditDialog(release)">
-  <md-icon>settings</md-icon>&nbsp;Config
-</button>
-<button color="primary" md-button (click)="toggleLoad(); $event.stopPropagation(); delete(release.name);">
-  <md-icon>delete</md-icon>&nbsp;Delete
-</button>
+<md-menu #menu="mdMenu">
+  <button md-menu-item (click)="openEditDialog(release)">
+    <md-icon color="primary">edit</md-icon>
+    <span>Edit</span>
+  </button>
+  <button md-menu-item (click)="toggleLoad(); $event.stopPropagation(); delete(release.name);">
+    <md-icon color="primary">delete</md-icon>
+    <span>Delete</span>
+  </button>
+</md-menu>
 
-<div *ngIf="release" class='release-notes'>
-  <div *ngIf="showNotes">
-    <pre>
-{{ release.info.status.resources }}
-{{ release.info.status.notes }}
-    </pre>
-  </div>
-</div>
 
-<div *ngIf="oldReleases" class='release-history'>
-  <div *ngIf="showHistory">
-    <table>
-      <thead>
-        <tr>
-          <th>Revision</th>
-          <th>Updated</th>
-          <th>Status</th>
-          <th>Chart</th>
-          <th>Description</th> 
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let release of oldReleases; let i = index">
-          <td>{{ i+1 }}</td>
-          <td>{{ release.info.last_deployed.seconds | unepoch }}</td>
-          <td>{{ release.info.status.code | status }}</td>
-          <td>{{ release.chart.metadata.name }}</td>
-          <td>{{ release.info.Description}}</td> 
-          <td>
-            <button *ngIf="release.info.status.code != 1" md-button (click)="getDiff(release.name, (oldReleases.length - 1) - i)">
-              <md-icon>compare</md-icon> Diff
-            </button>
-            <button *ngIf="release.info.status.code != 1" md-button (click)="loading=true;rollback(release.name, i+1)">
-              <md-icon>undo</md-icon> Rollback
-            </button>
-          </td>
-        </tr>
-      <tbody>
-    </table>
-  </div>
-</div>
 <md-spinner *ngIf="loading" color="primary" class="app-spinner"></md-spinner>

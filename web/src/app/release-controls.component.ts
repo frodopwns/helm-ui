@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
+import { Component, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
 import { Router }            from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
@@ -20,14 +20,11 @@ import 'brace/mode/yaml'
   templateUrl: './release-controls.component.html',
   styleUrls: [ './release-controls.component.css' ]
 })
-export class ReleaseControlsComponent implements OnInit {
-  @Input() releaseName: string;
+export class ReleaseControlsComponent {
+  @Input() release: Release;
   @Input() ParentReleases: Release[];
   @Output() outputEvent:EventEmitter<string>=new EventEmitter();
-  oldReleases: Release[];
-  release: Release;
-  showNotes: boolean;
-  showHistory: boolean;
+
   dialogResp: string;
   loading: boolean;
 
@@ -36,20 +33,7 @@ export class ReleaseControlsComponent implements OnInit {
     private _dialog: MdDialog
   ) { }
 
-  ngOnInit(): void {
-    this.getRelease(this.releaseName);
-    this.getReleaseHistory(this.releaseName);
-  }
 
-  getRelease(name: string): void {
-    this.releaseService.getRelease(name).then(release => this.release = release);
-  }
-  getReleaseHistory(name: string): void {
-    this.releaseService.getReleaseHistory(name)
-      .then(releases => {
-        this.oldReleases = releases.reverse();
-      });
-  }
   delete(name: string): void {
     name = name.trim();
     if (!name) { return; }
@@ -58,19 +42,9 @@ export class ReleaseControlsComponent implements OnInit {
         this.outputEvent.emit(name);
       });
   }
-  rollback(name: string, revision: number): void {
-    if (!name || !revision) { return; }
-    this.releaseService.rollback(name, revision)
-      .then(release => {
-        console.log(release);
-        for (var i = 0; i < this.ParentReleases.length; i++) {
-          if (this.ParentReleases[i].name == release.name) {
-            this.ParentReleases[i] = release;
-          }
-        }
-      });
-  }
+
   openEditDialog(rel: Release) {
+    console.log(rel);
     let configData = rel.config.raw ? rel.config.raw.trim():"";
     const dialogRef = this._dialog.open(DialogContentComponent, {
       data: {'config':configData, 'values':rel.chart.values.raw},
@@ -92,32 +66,8 @@ export class ReleaseControlsComponent implements OnInit {
     })
   }
 
- getDiff(name: string, revision: number): void {
-    if (!name) { return; }
-    this.releaseService.diff(name, revision)
-      .then(response => {
-        this.openDiffDialog(response.diff);
-      });
- }
-
- openDiffDialog(diff: string) {
-   if (!diff) { diff = '<span>No change.</span>';}
-    const dialogRef = this._dialog.open(DiffDialogComponent, {
-      data: diff,
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialogResp = result;
-    })
-  }
-
   toggleLoad(): void {
     this.loading = this.loading ? false: true; 
-  }
-  toggleShowHistory(): void {
-    this.showHistory = this.showHistory ? false:true;
-  }
-  toggleShowNotes(): void {
-    this.showNotes = this.showNotes ? false:true;
   }
 }
 
@@ -161,29 +111,6 @@ export class DialogContentComponent {
     @Optional() public dialogRef: MdDialogRef<DialogContentComponent>,
     @Inject(MD_DIALOG_DATA) public data: any
   ) {}
-}
-
-
-@Component({
-  template: `
-    <div [innerHTML]="data | safe: 'html'" class="diff-content"></div>
-    <button color="accent" md-button (click)="dialogRef.close()">
-      <md-icon>cancel</md-icon> cancel
-    </button>
-  `,
-  styles: [`
-    .diff-content {
-      width: 50em;
-      height: 10em;
-    }
-  `],
-})
-export class DiffDialogComponent {
-  code: string;
-  constructor( 
-    @Optional() public dialogRef: MdDialogRef<DiffDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any
-  ) { }
 }
 
 import { Pipe, PipeTransform } from '@angular/core';

@@ -1,0 +1,61 @@
+
+<h2>{{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></h2>
+<md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+
+<comp-bar [templates]="release.chart.templates"></comp-bar>
+<div><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</div>
+<p>{{release.chart.metadata.description}}</p>
+
+<button color="primary" md-button (click)="toggleShowNotes();">
+    <md-icon>event_note</md-icon>&nbsp;Notes
+</button>
+
+<button disabled="false" color="primary" md-button (click)="toggleShowHistory();">
+    <md-icon>history</md-icon>&nbsp;History
+</button>
+
+
+<div *ngIf="release" class='release-notes'>
+  <div *ngIf="showNotes">
+    <pre>
+{{ release.info.status.resources }}
+{{ release.info.status.notes }}
+    </pre>
+  </div>
+</div>
+
+<div *ngIf="releases" class='release-history'>
+  <div *ngIf="showHistory">
+    <table>
+      <thead>
+        <tr>
+          <th>Revision</th>
+          <th>Updated</th>
+          <th>Status</th>
+          <th>Chart</th>
+          <th>Description</th> 
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let release of releases; let i = index">
+          <td>{{ i+1 }}</td>
+          <td>{{ release.info.last_deployed.seconds | unepoch }}</td>
+          <td>{{ release.info.status.code | status }}</td>
+          <td>{{ release.chart.metadata.name }}</td>
+          <td>{{ release.info.Description}}</td> 
+          <td>
+            <button *ngIf="release.info.status.code != 1" md-button (click)="getDiff(release.name, (releases.length - 1) - i)">
+              <md-icon>compare</md-icon> Diff
+            </button>
+            <button *ngIf="release.info.status.code != 1" md-button (click)="loading=true;rollback(release.name, i+1)">
+              <md-icon>undo</md-icon> Rollback
+            </button>
+          </td>
+        </tr>
+      <tbody>
+    </table>
+  </div>
+</div>
+
+<release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+

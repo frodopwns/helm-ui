@@ -1,0 +1,32 @@
+
+.releases h3 {
+  color: black;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+.releases label {
+  font-weight: bold;
+}
+md-card-content {
+  padding: 0.8em 0.7em 0 0.7em;
+}
+
+.app-action {
+    display: inline-block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+comp-bar {
+  top: -1em;
+  position: relative;
+}
+
+md-icon.status-flag {
+  display: inline-block;
+}
+
+.green md-icon {
+  color: green;
+}
