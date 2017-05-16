@@ -2,6 +2,8 @@ vendor/
 rootfs/opt/helm-ui/sbin
 .DS_Store
 
+web/src/app/libs/**/*.js
+web/src/app/libs/**/*.map
 web/src/app/*.js
 web/src/app/*.map
 web/src/main.js

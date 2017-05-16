@@ -24,6 +24,8 @@ import { ReleaseControlsComponent, SafePipe, UnEpochPipe, StatusStringPipe, Dial
 
 import {AceEditorModule} from 'ng2-ace-editor';
 
+import {NotificationsService, SimpleNotificationsModule} from './libs/angular2-notifications/simple-notifications.module';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -41,6 +43,7 @@ import {AceEditorModule} from 'ng2-ace-editor';
     MdDialogModule,
     BrowserAnimationsModule,
     AceEditorModule,
+    SimpleNotificationsModule
   ],
   declarations: [
     AppComponent,
@@ -57,7 +60,8 @@ import {AceEditorModule} from 'ng2-ace-editor';
   ],
   providers: [ 
     ReleaseService,
-    ChartRepoService
+    ChartRepoService,
+    NotificationsService
   ],
   entryComponents: [ DialogContentComponent, DiffDialogComponent ],
   bootstrap: [ AppComponent ]
