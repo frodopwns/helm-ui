@@ -14,8 +14,6 @@ import {NotificationsService} from './libs/angular2-notifications/simple-notific
   </div>
   <simple-notifications [options]="options"></simple-notifications>
   <router-outlet></router-outlet>
-
-  <button (click)="create()">Create</button>
   `,
   styleUrls: ['./app.component.css'],
 })
@@ -24,17 +22,8 @@ export class AppComponent {
   title = 'HelmUI';
   public options = {
         position: ["top", "left"],
-        timeOut: 2000,
+        timeOut: 5000,
         clickToClose: true,
         lastOnBottom: true,
   };
-  create() {
-        this._service.success(
-            'Some Title',
-            'Some Content',
-            {
-                timeOut: 5000,
-            }
-        )
-  }
 }
