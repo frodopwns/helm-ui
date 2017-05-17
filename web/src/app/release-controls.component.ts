@@ -1,6 +1,7 @@
 import { Component, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
 import { Router }            from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import {NotificationsService} from './angular2-notifications/simple-notifications.module';
 
 import { Observable }        from 'rxjs/Observable';
 import { Subject }           from 'rxjs/Subject';
@@ -30,17 +31,24 @@ export class ReleaseControlsComponent {
 
   constructor(
     private releaseService: ReleaseService,
-    private _dialog: MdDialog
+    private _dialog: MdDialog,
+    private _notify: NotificationsService
   ) { }
 
+  noteSuccess(message: string): void {
+    this._notify.success(
+       'Success',
+       message,
+       { }
+    );
+  }
 
-  delete(name: string): void {
-    name = name.trim();
-    if (!name) { return; }
-    this.releaseService.delete(name)
+  delete(): void {
+    this.releaseService.delete(this.release.name)
       .then(response => {
-        this.outputEvent.emit(name);
-      });
+      this.outputEvent.emit(this.release.name);
+      this.noteSuccess(`${this.release.name} successfully deleted.`)
+    }).catch(error => this.loading=false);
   }
 
   openEditDialog(rel: Release) {
@@ -61,6 +69,7 @@ export class ReleaseControlsComponent {
                 this.ParentReleases[i] = release;
               }
             }
+            this.noteSuccess(`${release.name} successfully updated.`)
           });
       }
     })

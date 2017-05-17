@@ -5,6 +5,7 @@ import { HttpModule }    from '@angular/http';
 
 import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {NotificationsService, SimpleNotificationsModule} from './angular2-notifications/simple-notifications.module';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -44,7 +45,8 @@ import {AceEditorModule} from 'ng2-ace-editor';
     MaterialModule,
     BrowserAnimationsModule,
     AceEditorModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    SimpleNotificationsModule
   ],
   declarations: [
     AppComponent,
@@ -62,7 +64,8 @@ import {AceEditorModule} from 'ng2-ace-editor';
   ],
   providers: [ 
     ReleaseService,
-    ChartRepoService
+    ChartRepoService,
+    NotificationsService
   ],
   entryComponents: [ DialogContentComponent, DiffDialogComponent ],
   bootstrap: [ AppComponent ]

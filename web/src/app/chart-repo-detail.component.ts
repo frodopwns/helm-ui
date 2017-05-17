@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
 import { Router }            from '@angular/router';
+import {NotificationsService} from './angular2-notifications/simple-notifications.module';
+
 
 import { ChartRepoService } from './chart-repo.service';
 import { ChartRepo } from './chart-repo'
@@ -26,7 +28,8 @@ export class ChartRepoDetailComponent implements OnInit {
       private chartRepoService: ChartRepoService,
       private route: ActivatedRoute,
       private location: Location,
-      private router: Router
+      private router: Router,
+      private _notify: NotificationsService
     ) {}
 
     ngOnInit(): void {
@@ -37,6 +40,14 @@ export class ChartRepoDetailComponent implements OnInit {
           this.filtered = Object.assign([], charts);
         });
       this.repo = this.route.snapshot.params['name'];
+    }
+
+    noteSuccess(message: string): void {
+       this._notify.success(
+         'Success',
+         message,
+         { }
+       );
     }
 
     filterCharts(value: string): void{
@@ -54,6 +65,7 @@ export class ChartRepoDetailComponent implements OnInit {
       this.chartRepoService.install(name, repo)
         .then(release => {
           this.router.navigate(['/dashboard']);
+          this.noteSuccess(`${name} installed successfully.`);
         });
     }
 

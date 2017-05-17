@@ -1,5 +1,4 @@
 import { Component, OnInit, Optional, Inject, Input } from '@angular/core';
-import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
