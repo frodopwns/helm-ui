@@ -1,6 +1,8 @@
 import { Component, OnInit, Optional, Inject, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { ActivatedRoute, Params }   from '@angular/router';
+import { Location }                 from '@angular/common';
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
@@ -19,23 +21,30 @@ export class ReleaseComponent implements OnInit {
   showHistory: boolean;
   dialogResp: string;
   loading: boolean;
+  onRoute: boolean;
 
   constructor(
     private releaseService: ReleaseService,
-    private _dialog: MdDialog
+    private _dialog: MdDialog,
+    private location: Location,
+    private route: ActivatedRoute
   ) { }
 
-  initData(): void {
-    this.getRelease(this.release.name);
-    this.getReleaseHistory(this.release.name);
+  initData(name: string): void {
+    this.getRelease(name);
+    this.getReleaseHistory(name);
   }
 
   ngOnInit(): void {
-    this.initData();
+    let name = this.route.snapshot.params['name'];
+    if (name) {
+      this.onRoute = true;
+      this.initData(name);
+    }
   }
 
   ngOnChanges() {
-    this.initData();
+    this.initData(this.release.name);
   }
 
   getRelease(name: string): void {
@@ -136,7 +145,14 @@ export class ReleaseComponent implements OnInit {
    //this.releases = this.releases.filter(rel => rel.name !== value)
 
   }
-
+  goBack(): void {
+    if (this.onRoute) {
+      this.location.back();
+    } else {
+      this.showListPane = true;
+      this.showRelPane = false;
+    }
+  }
 }
 
 @Component({

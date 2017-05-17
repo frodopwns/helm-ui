@@ -1,4 +1,5 @@
-
+<md-card >
+<md-card-content *ngIf="release">
 <h2>{{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></h2>
 <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
 
@@ -59,3 +60,11 @@
 
 <release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
 
+</md-card-content>
+</md-card > 
+
+<span class="app-action" *ngIf="onRoute">
+    <button class="app-button" md-fab (click)="goBack()">
+      <md-icon>arrow_back</md-icon>
+    </button>
+</span>

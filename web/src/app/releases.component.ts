@@ -19,10 +19,13 @@ export class ReleasesComponent implements OnInit {
   watcher: Subscription;
   activeMediaQuery: string = "";
   extraSmall: boolean;
+  showListPane: boolean = true;
+  showRelPane: boolean;
 
   constructor(
     private releaseService: ReleaseService,
-    media: ObservableMedia
+    media: ObservableMedia,
+    private router: Router
   ) {
     this.watcher = media.subscribe((change: MediaChange) => {
       this.activeMediaQuery = change ? `'${change.mqAlias}' = (${change.mediaQuery})` : "";
@@ -30,6 +33,7 @@ export class ReleasesComponent implements OnInit {
          this.extraSmall = true;
       } else {
           this.extraSmall = false;
+          this.showRelPane = true;
       }
     });
   }
@@ -56,6 +60,9 @@ export class ReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getReleases();
+    if (!this.extraSmall) {
+      this.showRelPane = true;
+    }
   }
 
   statusColor(status: number): string {
@@ -78,8 +85,30 @@ export class ReleasesComponent implements OnInit {
             return 'grey';
     }
   }
+
   onSelect(release: Release): void {
     this.selectedRelease = release;
+    if (this.extraSmall) {
+      console.log("selected small yo")
+      this.showListPane = false;
+      this.showRelPane = true;
+      this.extraSmall = false;
+      //this.router.navigate(['/release', release.name]);
+    }
+  }
+  showReleasePane(): boolean {
+      return this.extraSmall;
+  }
+  listPaneSize(): number {
+    if (this.showListPane) {
+      return 70;
+    }
+    return 0;
+  }
+  goBack(): void {
+    this.showRelPane = false;
+    this.showListPane = true;
+    this.extraSmall = true;
   }
   onComponentChange(value: string){
    console.log("I have a values!!!" + value);
