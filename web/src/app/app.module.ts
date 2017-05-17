@@ -13,6 +13,8 @@ import { AppComponent }         from './app.component';
 import { ChartReposComponent }   from './chart-repos.component';
 import { ChartRepoDetailComponent } from './chart-repo-detail.component';
 
+import { FlexLayoutModule } from "@angular/flex-layout";
+
 import { ReleasesComponent }      from './releases.component';
 import { ReleaseComponent }      from './release.component';
 
@@ -42,6 +44,7 @@ import {AceEditorModule} from 'ng2-ace-editor';
     MaterialModule,
     BrowserAnimationsModule,
     AceEditorModule,
+    FlexLayoutModule
   ],
   declarations: [
     AppComponent,
