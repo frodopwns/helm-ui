@@ -113,7 +113,7 @@ export class ReleasesComponent implements OnInit {
   onComponentChange(value: string){
    console.log("I have a values!!!" + value);
    this.releases = this.releases.filter(rel => rel.name !== value)
-
+   this.selectedRelease = this.releases[0];
   }
 
 }

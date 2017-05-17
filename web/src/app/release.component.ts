@@ -148,9 +148,6 @@ export class ReleaseComponent implements OnInit {
   goBack(): void {
     if (this.onRoute) {
       this.location.back();
-    } else {
-      this.showListPane = true;
-      this.showRelPane = false;
     }
   }
 }
