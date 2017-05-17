@@ -7,6 +7,7 @@ import { Subject }           from 'rxjs/Subject';
 
 // Observable class extensions
 import 'rxjs/add/observable/of';
+import {NotificationsService} from './libs/angular2-notifications/simple-notifications.module';
 
 import { Release } from './release';
 import { ReleaseService } from './release.service';
@@ -33,12 +34,21 @@ export class ReleaseControlsComponent implements OnInit {
 
   constructor(
     private releaseService: ReleaseService,
-    private _dialog: MdDialog
+    private _dialog: MdDialog,
+    private _notify: NotificationsService
   ) { }
 
   ngOnInit(): void {
     this.getRelease(this.releaseName);
     this.getReleaseHistory(this.releaseName);
+  }
+
+  noteSuccess(message: string): void {
+    this._notify.success(
+      'Success',
+      message,
+      { }
+    );
   }
 
   getRelease(name: string): void {
@@ -50,13 +60,12 @@ export class ReleaseControlsComponent implements OnInit {
         this.oldReleases = releases.reverse();
       });
   }
-  delete(name: string): void {
-    name = name.trim();
-    if (!name) { return; }
-    this.releaseService.delete(name)
+  delete(): void {
+    this.releaseService.delete(this.releaseName)
       .then(response => {
-        this.outputEvent.emit(name);
-      });
+        this.outputEvent.emit(this.releaseName);
+        this.noteSuccess(`${this.releaseName} successfully deleted.`)
+      }).catch(error => this.loading=false);
   }
   rollback(name: string, revision: number): void {
     if (!name || !revision) { return; }
@@ -68,7 +77,9 @@ export class ReleaseControlsComponent implements OnInit {
             this.ParentReleases[i] = release;
           }
         }
+        this.noteSuccess(`${name} successfully rolled back to revision: ${revision}.`)
       });
+      
   }
   openEditDialog(rel: Release) {
     let configData = rel.config.raw ? rel.config.raw.trim():"";
@@ -87,6 +98,7 @@ export class ReleaseControlsComponent implements OnInit {
                 this.ParentReleases[i] = release;
               }
             }
+            this.noteSuccess(`${release.name} successfully updated.`)
           });
       }
     })

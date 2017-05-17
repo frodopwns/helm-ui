@@ -1,5 +1,4 @@
-import { Component, OnInit, Optional, Inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
