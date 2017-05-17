@@ -1,5 +1,8 @@
-import { Component, OnInit, Optional, Inject } from '@angular/core';
+import { Component, OnInit, Optional, Inject, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+
+import {Subscription} from "rxjs/Subscription";
+import {MediaChange, ObservableMedia} from "@angular/flex-layout";
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
@@ -7,15 +10,40 @@ import { ReleaseService } from './release.service';
 @Component({
   selector: 'my-releases',
   templateUrl: './releases.component.html',
+  encapsulation: ViewEncapsulation.None,
   styleUrls: [ './releases.component.css' ]
 })
 export class ReleasesComponent implements OnInit {
   releases: Release[];
   selectedRelease: Release;
+  watcher: Subscription;
+  activeMediaQuery: string = "";
+  extraSmall: boolean;
 
   constructor(
-    private releaseService: ReleaseService
-  ) { }
+    private releaseService: ReleaseService,
+    media: ObservableMedia
+  ) {
+    this.watcher = media.subscribe((change: MediaChange) => {
+      this.activeMediaQuery = change ? `'${change.mqAlias}' = (${change.mediaQuery})` : "";
+      if ( change.mqAlias == 'xs') {
+         this.extraSmall = true;
+      } else {
+          this.extraSmall = false;
+      }
+    });
+  }
+
+
+  ngOnDestroy() {
+    this.watcher.unsubscribe();
+  }
+
+  loadMobileContent() { 
+    // Do something special since the viewport is currently
+    // using mobile display sizes
+    console.log("THIS SHIT IS MOBILE");
+  }
 
   getReleases(): void {
     this.releaseService.getReleases().then(

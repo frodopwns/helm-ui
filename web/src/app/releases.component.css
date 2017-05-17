@@ -11,6 +11,10 @@ md-card-content {
   padding: 0.8em 0.7em 0 0.7em;
 }
 
+.selected {
+  background-color: lightgray;
+}
+
 .app-action {
     display: inline-block;
     position: fixed;
@@ -27,6 +31,7 @@ md-icon.status-flag {
   display: inline-block;
 }
 
-.green md-icon {
-  color: green;
+
+md-list button[md-icon-button] {
+  float: right;
 }
