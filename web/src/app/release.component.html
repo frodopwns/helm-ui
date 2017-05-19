@@ -1,0 +1,77 @@
+<md-card *ngIf="release">
+    <release-controls class="release-view" [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+  <md-card-header>
+    <md-card-title>
+      {{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon>
+    </md-card-title>
+    <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+    <md-card-subtitle><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</md-card-subtitle>
+  </md-card-header>
+  <md-card-content >
+    <comp-bar [templates]="release.chart.templates"></comp-bar>
+    <p>{{release.chart.metadata.description}}</p>
+
+<md-tab-group>
+  <md-tab>
+    <ng-template md-tab-label>
+      <md-icon>history</md-icon>
+    </ng-template>
+   <div *ngIf="releases" class='release-history'>
+       <md-list dense>
+          <md-list-item>
+            <div fxFlex="10">#</div>
+            <div fxFlex="20">Updated</div>
+            <div fxFlex="15">State</div>
+            <div fxFlex="20">Description</div>
+            <div fxFlex="35"></div>
+          </md-list-item>
+          <md-list-item *ngFor="let release of releases; let i = index">
+            <div fxFlex="10">{{ i+1 }}</div>
+            <div fxFlex="20">{{ release.info.last_deployed.seconds | unepoch }}</div>
+            <div fxFlex="15"><md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></div>
+            <div fxFlex="20">{{ release.info.Description}}</div>
+            <div fxFlex="35">
+              <div fxFlex="50">
+                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="getDiff(release.name, (releases.length - 1) - i)">
+                  <md-icon>compare</md-icon> Diff
+                </button>
+              </div>
+              <div fxFlex="50">
+                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="loading=true;rollback(release.name, i+1)">
+                  <md-icon>undo</md-icon> Rollback
+                </button>
+              </div>
+            </div>
+          </md-list-item>
+        </md-list>
+    </div>
+
+
+  </md-tab>
+  <md-tab>
+    <ng-template md-tab-label>
+      
+      <md-icon>event_note</md-icon>
+    </ng-template>
+ 
+
+      <div class='release-notes'>
+        <pre>
+    {{ release.info.status.resources }}
+    {{ release.info.status.notes }}
+        </pre>
+      </div>
+
+  </md-tab>
+</md-tab-group>
+
+
+
+  </md-card-content>
+</md-card > 
+
+<span class="app-action" *ngIf="onRoute">
+    <button class="app-button" md-fab (click)="goBack()">
+      <md-icon>arrow_back</md-icon>
+    </button>
+</span>

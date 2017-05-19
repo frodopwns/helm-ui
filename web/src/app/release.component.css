@@ -1,0 +1,36 @@
+
+
+
+md-card-subtitle label {
+  font-weight: bold;
+}
+
+.app-action {
+    display: inline-block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+comp-bar {
+  top: -1em;
+  position: relative;
+}
+
+md-icon.status-flag {
+  display: inline-block;
+}
+
+release-controls.release-view {
+  float: right;
+}
+
+
+.release-notes pre {
+  background-color: black;
+  color: white;
+  padding: 5px;
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
+}

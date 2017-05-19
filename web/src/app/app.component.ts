@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {NotificationsService} from './angular2-notifications/simple-notifications.module';
+
 
 @Component({
   selector: 'my-app',
@@ -11,10 +13,18 @@ import { Component } from '@angular/core';
       </md-toolbar>
     </a>
   </div>
+  <simple-notifications [options]="options"></simple-notifications>
   <router-outlet></router-outlet>
   `,
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  constructor( private _service: NotificationsService ) {}
   title = 'HelmUI';
+  public options = {
+     position: ["top", "left"],
+     timeOut: 5000,
+     clickToClose: true,
+     lastOnBottom: true,
+  };
 }

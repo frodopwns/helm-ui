@@ -38,7 +38,8 @@
       'w3c-blob': 'npm:w3c-blob',
       'buffer': 'npm:buffer',
       'base64-js': 'npm:base64-js',
-      'ieee754': 'npm:ieee754'
+      'ieee754': 'npm:ieee754',
+      '@angular/flex-layout': 'npm:@angular/flex-layout/bundles/flex-layout.umd.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

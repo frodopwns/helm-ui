@@ -1,25 +1,72 @@
-<md-card>
-  <md-card-content>
-    <h2>Dashboard</h2>
-  </md-card-content>
-</md-card>
-<md-card class="releases" *ngFor="let release of releases">
-  <md-card-content>
-    <h3>{{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></h3><md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
 
-    <comp-bar [templates]="release.chart.templates"></comp-bar>
-    <div><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</div>
-    <p>{{release.chart.metadata.description}}</p>
+<div class="containerX">
+  <div fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxFlex class="coloredContainerX box" >
+    <div *ngIf="showListPane" fxFlex="listPaneSize()">
+      <md-list class="releases">
+        <md-list-item>
+          <div fxFlex="8">
+          </div>
+          <div fxFlex="22">
+            Release
+          </div>
+          <div fxFlex="22">
+            Chart
+          </div>
+          <div fxFlex="22">
+            Namespace
+          </div>
+          <div fxFlex="22">
+            Version
+          </div>
+          <div fxFlex="4">
+          </div>
+          
+        </md-list-item>
 
-    <release-controls [ParentReleases]="releases" [releaseName]="release.name" (outputEvent)= "onComponentChange($event)"></release-controls>
-  </md-card-content>
-</md-card>
+        <md-list-item 
+          *ngFor="let release of releases"
+          (click)="onSelect(release);"
+          [class.selected]="release === selectedRelease">
+
+          <div fxFlex="8">
+            <md-icon md-list-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon> 
+          </div>
+          <div fxFlex="22">
+            {{release.name}} 
+            <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+          </div>
+          <div fxFlex="22">
+            {{release.chart.metadata.name}}
+          </div>
+          <div fxFlex="22">
+            {{release.namespace}}
+          </div>
+          <div fxFlex="22">
+            {{release.version}}
+          </div>
+          <div fxFlex="4">
+            <release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+          </div>
+        </md-list-item>
+      </md-list>
+    </div>
+    <div *ngIf="showRelPane" fxFlex="50" [fxHide]="showReleasePane()">
+        <release *ngIf="selectedRelease" [release]="selectedRelease" [releases]="releases"></release>
+    </div>
+  </div>
+</div>
 
 
-<span class="app-action">
+<span class="app-action" *ngIf="showListPane">
   <a routerLink="/chart-repos">
     <button class="app-button" md-fab>
       <md-icon>add circle</md-icon>
     </button>
   </a>
+</span>
+
+<span class="app-action" *ngIf="showListPane==false">
+    <button class="app-button" md-fab (click)="goBack()">
+      <md-icon>arrow_back</md-icon>
+    </button>
 </span>

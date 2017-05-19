@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
+import { Component, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
 import { Router }            from '@angular/router';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import {NotificationsService} from './angular2-notifications/simple-notifications.module';
 
 import { Observable }        from 'rxjs/Observable';
 import { Subject }           from 'rxjs/Subject';
@@ -20,57 +21,38 @@ import 'brace/mode/yaml'
   templateUrl: './release-controls.component.html',
   styleUrls: [ './release-controls.component.css' ]
 })
-export class ReleaseControlsComponent implements OnInit {
-  @Input() releaseName: string;
+export class ReleaseControlsComponent {
+  @Input() release: Release;
   @Input() ParentReleases: Release[];
   @Output() outputEvent:EventEmitter<string>=new EventEmitter();
-  oldReleases: Release[];
-  release: Release;
-  showNotes: boolean;
-  showHistory: boolean;
+
   dialogResp: string;
   loading: boolean;
 
   constructor(
     private releaseService: ReleaseService,
-    private _dialog: MdDialog
+    private _dialog: MdDialog,
+    private _notify: NotificationsService
   ) { }
 
-  ngOnInit(): void {
-    this.getRelease(this.releaseName);
-    this.getReleaseHistory(this.releaseName);
+  noteSuccess(message: string): void {
+    this._notify.success(
+       'Success',
+       message,
+       { }
+    );
   }
 
-  getRelease(name: string): void {
-    this.releaseService.getRelease(name).then(release => this.release = release);
-  }
-  getReleaseHistory(name: string): void {
-    this.releaseService.getReleaseHistory(name)
-      .then(releases => {
-        this.oldReleases = releases.reverse();
-      });
-  }
-  delete(name: string): void {
-    name = name.trim();
-    if (!name) { return; }
-    this.releaseService.delete(name)
+  delete(): void {
+    this.releaseService.delete(this.release.name)
       .then(response => {
-        this.outputEvent.emit(name);
-      });
+      this.outputEvent.emit(this.release.name);
+      this.noteSuccess(`${this.release.name} successfully deleted.`)
+    }).catch(error => this.loading=false);
   }
-  rollback(name: string, revision: number): void {
-    if (!name || !revision) { return; }
-    this.releaseService.rollback(name, revision)
-      .then(release => {
-        console.log(release);
-        for (var i = 0; i < this.ParentReleases.length; i++) {
-          if (this.ParentReleases[i].name == release.name) {
-            this.ParentReleases[i] = release;
-          }
-        }
-      });
-  }
+
   openEditDialog(rel: Release) {
+    console.log(rel);
     let configData = rel.config.raw ? rel.config.raw.trim():"";
     const dialogRef = this._dialog.open(DialogContentComponent, {
       data: {'config':configData, 'values':rel.chart.values.raw},
@@ -87,37 +69,14 @@ export class ReleaseControlsComponent implements OnInit {
                 this.ParentReleases[i] = release;
               }
             }
+            this.noteSuccess(`${release.name} successfully updated.`)
           });
       }
     })
   }
 
- getDiff(name: string, revision: number): void {
-    if (!name) { return; }
-    this.releaseService.diff(name, revision)
-      .then(response => {
-        this.openDiffDialog(response.diff);
-      });
- }
-
- openDiffDialog(diff: string) {
-   if (!diff) { diff = '<span>No change.</span>';}
-    const dialogRef = this._dialog.open(DiffDialogComponent, {
-      data: diff,
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialogResp = result;
-    })
-  }
-
   toggleLoad(): void {
     this.loading = this.loading ? false: true; 
-  }
-  toggleShowHistory(): void {
-    this.showHistory = this.showHistory ? false:true;
-  }
-  toggleShowNotes(): void {
-    this.showNotes = this.showNotes ? false:true;
   }
 }
 
@@ -131,10 +90,10 @@ export class ReleaseControlsComponent implements OnInit {
       [mode]="'yaml'"></ace-editor>
     <pre>{{ data.values }}</pre>
     <br />
-    <button color="accent" md-button (click)="dialogRef.close(editorInput.value)">
+    <button md-button (click)="dialogRef.close(editorInput.value)">
       <md-icon>save</md-icon> save
     </button>
-    <button color="accent" md-button (click)="dialogRef.close()">
+    <button md-button (click)="dialogRef.close()">
       <md-icon>cancel</md-icon> cancel
     </button>
   `,
@@ -161,29 +120,6 @@ export class DialogContentComponent {
     @Optional() public dialogRef: MdDialogRef<DialogContentComponent>,
     @Inject(MD_DIALOG_DATA) public data: any
   ) {}
-}
-
-
-@Component({
-  template: `
-    <div [innerHTML]="data | safe: 'html'" class="diff-content"></div>
-    <button color="accent" md-button (click)="dialogRef.close()">
-      <md-icon>cancel</md-icon> cancel
-    </button>
-  `,
-  styles: [`
-    .diff-content {
-      width: 50em;
-      height: 10em;
-    }
-  `],
-})
-export class DiffDialogComponent {
-  code: string;
-  constructor( 
-    @Optional() public dialogRef: MdDialogRef<DiffDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any
-  ) { }
 }
 
 import { Pipe, PipeTransform } from '@angular/core';
