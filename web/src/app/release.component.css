@@ -1,14 +1,8 @@
 
-.releases h3 {
-  color: black;
-  font-size: 1.4em;
+
+
+md-card-subtitle label {
   font-weight: bold;
-}
-.releases label {
-  font-weight: bold;
-}
-md-card-content {
-  padding: 0.8em 0.7em 0 0.7em;
 }
 
 .app-action {
@@ -27,6 +21,16 @@ md-icon.status-flag {
   display: inline-block;
 }
 
-.green md-icon {
-  color: green;
+release-controls.release-view {
+  float: right;
+}
+
+
+.release-notes pre {
+  background-color: black;
+  color: white;
+  padding: 5px;
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
 }

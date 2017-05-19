@@ -9,16 +9,18 @@
   </md-input-container>
 
   <md-card class="app-input-section" *ngFor="let chart of filtered">
+    <md-card-header>
+      <md-card-title>{{chart.name }}</md-card-title>
+    </md-card-header>
+    <img md-card-img src="{{chart.icon}}" />
     <md-card-content>
-      <h3>{{chart.name }}</h3>
-      <span class="chart-icon"><img src="{{chart.icon}}" /></span>
-      <span>{{ chart.description }} </span>
-      <br />
+      <p>{{ chart.description }} </p>
+      <md-spinner *ngIf="chart.loading" color="accent" class="app-spinner"></md-spinner>
+    </md-card-content>
+    <md-card-actions>
       <button md-button class="install"
         (click)="toggleLoad(chart); install(chart.name, repo)"><md-icon>get_app</md-icon> install</button>
-      <md-spinner *ngIf="chart.loading" color="accent" class="app-spinner"></md-spinner>
-
-    </md-card-content>
+    </md-card-actions>
   </md-card>
 
     <md-card>

@@ -1,66 +1,73 @@
-<md-card >
-<md-card-content *ngIf="release">
-<h2>{{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></h2>
-<md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+<md-card *ngIf="release">
+    <release-controls class="release-view" [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+  <md-card-header>
+    <md-card-title>
+      {{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon>
+    </md-card-title>
+    <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
+    <md-card-subtitle><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</md-card-subtitle>
+  </md-card-header>
+  <md-card-content >
+    <comp-bar [templates]="release.chart.templates"></comp-bar>
+    <p>{{release.chart.metadata.description}}</p>
 
-<comp-bar [templates]="release.chart.templates"></comp-bar>
-<div><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</div>
-<p>{{release.chart.metadata.description}}</p>
+<md-tab-group>
+  <md-tab>
+    <ng-template md-tab-label>
+      <md-icon>history</md-icon>
+    </ng-template>
+   <div *ngIf="releases" class='release-history'>
+       <md-list dense>
+          <md-list-item>
+            <div fxFlex="10">#</div>
+            <div fxFlex="20">Updated</div>
+            <div fxFlex="15">State</div>
+            <div fxFlex="20">Description</div>
+            <div fxFlex="35"></div>
+          </md-list-item>
+          <md-list-item *ngFor="let release of releases; let i = index">
+            <div fxFlex="10">{{ i+1 }}</div>
+            <div fxFlex="20">{{ release.info.last_deployed.seconds | unepoch }}</div>
+            <div fxFlex="15"><md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon></div>
+            <div fxFlex="20">{{ release.info.Description}}</div>
+            <div fxFlex="35">
+              <div fxFlex="50">
+                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="getDiff(release.name, (releases.length - 1) - i)">
+                  <md-icon>compare</md-icon> Diff
+                </button>
+              </div>
+              <div fxFlex="50">
+                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="loading=true;rollback(release.name, i+1)">
+                  <md-icon>undo</md-icon> Rollback
+                </button>
+              </div>
+            </div>
+          </md-list-item>
+        </md-list>
+    </div>
 
-<button color="primary" md-button (click)="toggleShowNotes();">
-    <md-icon>event_note</md-icon>&nbsp;Notes
-</button>
 
-<button disabled="false" color="primary" md-button (click)="toggleShowHistory();">
-    <md-icon>history</md-icon>&nbsp;History
-</button>
+  </md-tab>
+  <md-tab>
+    <ng-template md-tab-label>
+      
+      <md-icon>event_note</md-icon>
+    </ng-template>
+ 
+
+      <div class='release-notes'>
+        <pre>
+    {{ release.info.status.resources }}
+    {{ release.info.status.notes }}
+        </pre>
+      </div>
+
+  </md-tab>
+</md-tab-group>
 
 
-<div *ngIf="release" class='release-notes'>
-  <div *ngIf="showNotes">
-    <pre>
-{{ release.info.status.resources }}
-{{ release.info.status.notes }}
-    </pre>
-  </div>
-</div>
 
-<div *ngIf="releases" class='release-history'>
-  <div *ngIf="showHistory">
-    <table>
-      <thead>
-        <tr>
-          <th>Revision</th>
-          <th>Updated</th>
-          <th>Status</th>
-          <th>Chart</th>
-          <th>Description</th> 
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let release of releases; let i = index">
-          <td>{{ i+1 }}</td>
-          <td>{{ release.info.last_deployed.seconds | unepoch }}</td>
-          <td>{{ release.info.status.code | status }}</td>
-          <td>{{ release.chart.metadata.name }}</td>
-          <td>{{ release.info.Description}}</td> 
-          <td>
-            <button *ngIf="release.info.status.code != 1" md-button (click)="getDiff(release.name, (releases.length - 1) - i)">
-              <md-icon>compare</md-icon> Diff
-            </button>
-            <button *ngIf="release.info.status.code != 1" md-button (click)="loading=true;rollback(release.name, i+1)">
-              <md-icon>undo</md-icon> Rollback
-            </button>
-          </td>
-        </tr>
-      <tbody>
-    </table>
-  </div>
-</div>
-
-<release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
-
-</md-card-content>
+  </md-card-content>
 </md-card > 
 
 <span class="app-action" *ngIf="onRoute">

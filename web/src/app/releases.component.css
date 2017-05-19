@@ -7,9 +7,6 @@
 .releases label {
   font-weight: bold;
 }
-md-card-content {
-  padding: 0.8em 0.7em 0 0.7em;
-}
 
 .selected {
   background-color: lightgray;

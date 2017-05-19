@@ -154,7 +154,7 @@ export class ReleaseComponent implements OnInit {
 @Component({
   template: `
     <div [innerHTML]="data | safe: 'html'" class="diff-content"></div>
-    <button color="accent" md-button (click)="dialogRef.close()">
+    <button md-button (click)="dialogRef.close()">
       <md-icon>cancel</md-icon> cancel
     </button>
   `,

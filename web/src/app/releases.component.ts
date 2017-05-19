@@ -97,11 +97,14 @@ export class ReleasesComponent implements OnInit {
     }
   }
   showReleasePane(): boolean {
-      return this.extraSmall;
+    if (!this.showListPane) { 
+      return false;
+    }
+    return this.extraSmall;
   }
   listPaneSize(): number {
     if (this.showListPane) {
-      return 70;
+      return 50;
     }
     return 0;
   }

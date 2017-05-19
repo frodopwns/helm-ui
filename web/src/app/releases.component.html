@@ -4,39 +4,44 @@
     <div *ngIf="showListPane" fxFlex="listPaneSize()">
       <md-list class="releases">
         <md-list-item>
-          <div fxFlex="24">
+          <div fxFlex="8">
+          </div>
+          <div fxFlex="22">
             Release
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             Chart
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             Namespace
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             Version
           </div>
           <div fxFlex="4">
-            
           </div>
+          
         </md-list-item>
+
         <md-list-item 
           *ngFor="let release of releases"
           (click)="onSelect(release);"
           [class.selected]="release === selectedRelease">
 
-          <div fxFlex="24">
+          <div fxFlex="8">
             <md-icon md-list-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon> 
+          </div>
+          <div fxFlex="22">
             {{release.name}} 
             <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             {{release.chart.metadata.name}}
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             {{release.namespace}}
           </div>
-          <div fxFlex="24">
+          <div fxFlex="22">
             {{release.version}}
           </div>
           <div fxFlex="4">
@@ -45,7 +50,7 @@
         </md-list-item>
       </md-list>
     </div>
-    <div *ngIf="showRelPane" fxFlex [fxHide]="showReleasePane()">
+    <div *ngIf="showRelPane" fxFlex="50" [fxHide]="showReleasePane()">
         <release *ngIf="selectedRelease" [release]="selectedRelease" [releases]="releases"></release>
     </div>
   </div>

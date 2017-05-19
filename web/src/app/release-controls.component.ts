@@ -90,10 +90,10 @@ export class ReleaseControlsComponent {
       [mode]="'yaml'"></ace-editor>
     <pre>{{ data.values }}</pre>
     <br />
-    <button color="accent" md-button (click)="dialogRef.close(editorInput.value)">
+    <button md-button (click)="dialogRef.close(editorInput.value)">
       <md-icon>save</md-icon> save
     </button>
-    <button color="accent" md-button (click)="dialogRef.close()">
+    <button md-button (click)="dialogRef.close()">
       <md-icon>cancel</md-icon> cancel
     </button>
   `,
