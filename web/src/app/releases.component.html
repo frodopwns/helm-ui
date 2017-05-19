@@ -24,7 +24,7 @@
         </md-list-item>
 
         <md-list-item 
-          *ngFor="let release of releases"
+          *ngFor="let release of filtered"
           (click)="onSelect(release);"
           [class.selected]="release === selectedRelease">
 

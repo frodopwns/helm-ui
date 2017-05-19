@@ -7,11 +7,32 @@ import { ChartRepoDetailComponent } from './chart-repo-detail.component';
 import { ReleaseComponent } from './release.component';
 
 const routes: Routes = [
-  { path: 'dashboard', redirectTo: '', pathMatch: 'full' },
-  { path: 'chart-repos',  component: ChartReposComponent },
-  { path: 'release/:name', component: ReleaseComponent },
-  { path: 'chart-repos/detail/:name', component: ChartRepoDetailComponent },
-  { path: '',     component: ReleasesComponent }
+  { 
+    path: 'dashboard', 
+    redirectTo: '', 
+    pathMatch: 'full' ,
+    data: {'title': 'dashboard'}
+  },
+  { 
+    path: 'chart-repos',  
+    component: ChartReposComponent,
+    data: {'title': 'chart repos'}
+  },
+  { 
+    path: 'release/:name', 
+    component: ReleaseComponent,
+    data: {'title': 'release'}
+  },
+  { 
+    path: 'chart-repos/detail/:name', 
+    component: ChartRepoDetailComponent,
+    data: {'title': 'charts'}
+  },
+  { 
+    path: '',     
+    component: ReleasesComponent,
+    data: {'title': 'dashboard'}
+  }
 ];
 
 @NgModule({
