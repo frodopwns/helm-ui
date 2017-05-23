@@ -16,10 +16,10 @@ import 'rxjs/add/operator/mergeMap';
         <span fxFlex="20">
           <a class="title-bar" routerLink="/dashboard">
             <span><md-icon class="logo" color="accent">fingerprint</md-icon></span>
-            <span class="title">HelmUI</span>
+            <span class="title">{{ title }}</span>
           </a>
         </span>
-       <span fxFlex="60">{{ title }}</span>
+       <span fxFlex="60"></span>
         <span fxFlex="20"><search></search></span>
       </md-toolbar>
     
