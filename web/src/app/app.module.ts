@@ -26,16 +26,13 @@ import { CompBarComponent } from './comp-bar.component';
 import { SearchComponent } from './search.component';
 import { SearchService } from './search.service';
 
-import { 
-  ReleaseControlsComponent, 
-  SafePipe, 
-  UnEpochPipe, 
-  StatusStringPipe, 
-  DialogContentComponent 
-} from './release-controls.component'; 
+import { ReleaseControlsComponent } from './release-controls.component'; 
+import { SafePipe } from './safe.pipe';
+import { UnEpochPipe } from './unepoch.pipe';
+import { StatusStringPipe } from './status.pipe';
 
-import { DiffDialogComponent } from './release.component';
-
+import { AceDialogComponent } from './ace-dialog.component';
+import { DiffDialogComponent } from './diff-dialog.component';
 import {AceEditorModule} from 'ng2-ace-editor';
 
 @NgModule({
@@ -56,7 +53,7 @@ import {AceEditorModule} from 'ng2-ace-editor';
     ReleasesComponent,
     ReleaseComponent,
     ChartRepoDetailComponent,
-    DialogContentComponent,
+    AceDialogComponent,
     DiffDialogComponent,
     CompBarComponent,
     ReleaseControlsComponent,
@@ -72,7 +69,7 @@ import {AceEditorModule} from 'ng2-ace-editor';
     Title,
     SearchService
   ],
-  entryComponents: [ DialogContentComponent, DiffDialogComponent ],
+  entryComponents: [ AceDialogComponent, DiffDialogComponent ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

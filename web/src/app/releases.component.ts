@@ -1,4 +1,4 @@
-import { Component, OnInit, Optional, Inject, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title }     from '@angular/platform-browser';
 import {Subscription} from "rxjs/Subscription";
@@ -112,25 +112,28 @@ export class ReleasesComponent implements OnInit {
       //this.router.navigate(['/release', release.name]);
     }
   }
+  
   showReleasePane(): boolean {
     if (!this.showListPane) { 
       return false;
     }
     return this.extraSmall;
   }
+
   listPaneSize(): number {
     if (this.showListPane) {
       return 50;
     }
     return 0;
   }
+
   goBack(): void {
     this.showRelPane = false;
     this.showListPane = true;
     this.extraSmall = true;
   }
+
   onComponentChange(value: string){
-   console.log("I have a values!!!" + value);
    this.releases = this.releases.filter(rel => rel.name !== value)
    this.selectedRelease = this.releases[0];
   }

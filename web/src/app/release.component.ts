@@ -1,12 +1,13 @@
-import { Component, OnInit, Optional, Inject, Input } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit, Input } from '@angular/core';
+import { MdDialog } from '@angular/material';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
 
-import { DialogContentComponent } from './release-controls.component';
+import { AceDialogComponent } from './ace-dialog.component';
+import { DiffDialogComponent } from './diff-dialog.component';
 
 @Component({
   selector: 'release',
@@ -70,7 +71,7 @@ export class ReleaseComponent implements OnInit {
   }
   openEditDialog(rel: Release) {
     let configData = rel.config.raw ? rel.config.raw.trim():"";
-    const dialogRef = this._dialog.open(DialogContentComponent, {
+    const dialogRef = this._dialog.open(AceDialogComponent, {
       data: {'config':configData, 'values':rel.chart.values.raw},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -149,26 +150,4 @@ export class ReleaseComponent implements OnInit {
       this.location.back();
     }
   }
-}
-
-@Component({
-  template: `
-    <div [innerHTML]="data | safe: 'html'" class="diff-content"></div>
-    <button md-button (click)="dialogRef.close()">
-      <md-icon>cancel</md-icon> cancel
-    </button>
-  `,
-  styles: [`
-    .diff-content {
-      width: 50em;
-      height: 10em;
-    }
-  `],
-})
-export class DiffDialogComponent {
-  code: string;
-  constructor( 
-    @Optional() public dialogRef: MdDialogRef<DiffDialogComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any
-  ) { }
 }
