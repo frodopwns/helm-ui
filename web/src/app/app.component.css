@@ -1,33 +1,27 @@
+
+
 span.title {
     font-size: 1.2em;
 }
 
-div.title-bar a:link    {
+a.title-bar:link    {
   /* Applies to all unvisited links */
   text-decoration:  none;
-  font-weight:      bold;
-  background-color: #ddd;
-  color:            blue;
+  color:            white;
   } 
-div.title-bar a:visited {
+a.title-bar:visited {
   /* Applies to all visited links */
-  text-decoration:  none;
-  font-weight:      bold;
-  background-color: #ddd;
-  color:            #f0f;
-  } 
-div.title-bar a:hover   {
-  /* Applies to links under the pointer */
-  text-decoration:  none;
-  font-weight:      bold;
-  background-color: blue;
+  text-decoration:  none !important;
   color:            #fff;
   } 
-div.title-bar a:active  {
+a.title-bar:hover   {
+  /* Applies to links under the pointer */
+  text-decoration:  none;
+  color:            #fff;
+  } 
+a.title-bar:active  {
   /* Applies to activated links */
   text-decoration:  underline;
-  font-weight:      bold;
-  background-color: black;
   color: white;
   } 
 

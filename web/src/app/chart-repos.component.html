@@ -1,7 +1,5 @@
-
-
-  <h3>Chart Repositories</h3>
-
+    <md-card>
+      <md-card-content>
     <md-input-container>
       <input mdInput #repoName placeholder="Name" />
     </md-input-container>
@@ -12,17 +10,16 @@
       <md-icon>add</md-icon>
     </button>
 
-    <md-card>
-      <md-card-content>
+
         <md-list>
-          <md-list-item *ngFor="let repo of repos"
+          <md-list-item *ngFor="let repo of filtered"
               (click)="gotoDetail(repo)">
             <md-icon>directions_boat</md-icon>
-            <span class="name">{{repo.name}}</span>
-            <span class="url">{{repo.url}}</span>
-            <button md-button (click)="$event.stopPropagation(); delete(repo.name);">
+            <span fxFlex="20" class="name">{{repo.name}}</span>
+            <span fxFlex="60" class="url">{{repo.url}}</span>
+            <span fxFlex="20"><button md-button (click)="$event.stopPropagation(); delete(repo.name);">
               <md-icon>delete</md-icon> delete
-            </button> 
+            </button></span>
           </md-list-item>
         </md-list>
       </md-card-content>

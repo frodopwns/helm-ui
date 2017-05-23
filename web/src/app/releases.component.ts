@@ -1,11 +1,13 @@
-import { Component, OnInit, Optional, Inject, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Optional, Inject, Input, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { Title }     from '@angular/platform-browser';
 import {Subscription} from "rxjs/Subscription";
 import {MediaChange, ObservableMedia} from "@angular/flex-layout";
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
+
+import { SearchService } from './search.service';
 
 @Component({
   selector: 'my-releases',
@@ -14,9 +16,12 @@ import { ReleaseService } from './release.service';
   styleUrls: [ './releases.component.css' ]
 })
 export class ReleasesComponent implements OnInit {
+  @Input() title: string;
   releases: Release[];
+  filtered: Release[] = [];
   selectedRelease: Release;
   watcher: Subscription;
+  searcher: Subscription;
   activeMediaQuery: string = "";
   extraSmall: boolean;
   showListPane: boolean = true;
@@ -25,7 +30,9 @@ export class ReleasesComponent implements OnInit {
   constructor(
     private releaseService: ReleaseService,
     media: ObservableMedia,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
+    private search: SearchService
   ) {
     this.watcher = media.subscribe((change: MediaChange) => {
       this.activeMediaQuery = change ? `'${change.mqAlias}' = (${change.mediaQuery})` : "";
@@ -36,17 +43,16 @@ export class ReleasesComponent implements OnInit {
           this.showRelPane = true;
       }
     });
-  }
 
+    this.searcher = search.searchSent$.subscribe(
+      terms => {
+        this.filterReleases(terms);
+      });
+  }
 
   ngOnDestroy() {
     this.watcher.unsubscribe();
-  }
-
-  loadMobileContent() { 
-    // Do something special since the viewport is currently
-    // using mobile display sizes
-    console.log("THIS SHIT IS MOBILE");
+    this.searcher.unsubscribe();
   }
 
   getReleases(): void {
@@ -54,6 +60,7 @@ export class ReleasesComponent implements OnInit {
         releases => {
             this.releases = releases;
             this.selectedRelease = releases[0];
+            this.filtered = Object.assign([], releases);
         }
     );
   }
@@ -63,6 +70,16 @@ export class ReleasesComponent implements OnInit {
     if (!this.extraSmall) {
       this.showRelPane = true;
     }
+    this.titleService.setTitle("I am the title");
+  }
+
+  filterReleases(value: string): void{
+    if(!value) this.filtered = Object.assign([], this.releases);
+    this.filtered = Object.assign([], this.releases).filter(
+        item => (item.name.toLowerCase().indexOf(value.toLowerCase()) > -1 || 
+            item.chart.metadata.name.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+            item.namespace.toLowerCase().indexOf(value.toLowerCase()) > -1)
+    );
   }
 
   statusColor(status: number): string {
@@ -89,7 +106,6 @@ export class ReleasesComponent implements OnInit {
   onSelect(release: Release): void {
     this.selectedRelease = release;
     if (this.extraSmall) {
-      console.log("selected small yo")
       this.showListPane = false;
       this.showRelPane = true;
       this.extraSmall = false;

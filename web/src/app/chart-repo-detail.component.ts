@@ -4,12 +4,12 @@ import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
 import { Router }            from '@angular/router';
 import {NotificationsService} from './angular2-notifications/simple-notifications.module';
-
+import {Subscription} from "rxjs/Subscription";
 
 import { ChartRepoService } from './chart-repo.service';
 import { ChartRepo } from './chart-repo'
 import { Chart } from './chart'
-
+import { SearchService } from './search.service';
 import 'rxjs/add/operator/switchMap';
 
 @Component({
@@ -23,14 +23,21 @@ export class ChartRepoDetailComponent implements OnInit {
     repo: string;
     charts: Chart[];
     filtered: Chart[] = [];
+    searcher: Subscription;
 
     constructor(
       private chartRepoService: ChartRepoService,
       private route: ActivatedRoute,
       private location: Location,
       private router: Router,
-      private _notify: NotificationsService
-    ) {}
+      private _notify: NotificationsService,
+      private search: SearchService
+    ) {
+    this.searcher = search.searchSent$.subscribe(
+      terms => {
+        this.filterCharts(terms);
+    });
+  }
 
     ngOnInit(): void {
       this.route.params
