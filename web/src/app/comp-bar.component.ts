@@ -1,13 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router }            from '@angular/router';
 
-import { Observable }        from 'rxjs/Observable';
-import { Subject }           from 'rxjs/Subject';
-
-// Observable class extensions
-import 'rxjs/add/observable/of';
-
-import { CTemplate } from './release';
+import { ChartTemplate } from './release';
 
 
 export class CBlock {
@@ -22,7 +15,7 @@ export class CBlock {
   styleUrls: [ './comp-bar.component.css' ]
 })
 export class CompBarComponent implements OnInit {
-  @Input() templates: CTemplate[];
+  @Input() templates: ChartTemplate[];
   name: string; 
   blocks: CBlock[];
   resources: string[];
@@ -56,6 +49,5 @@ export class CompBarComponent implements OnInit {
       b.size = blockCount;
       this.blocks.push(b)
     }
-    
   }
 }

@@ -1,5 +1,5 @@
 import { Component, Optional, Inject } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 @Component({
   template: `

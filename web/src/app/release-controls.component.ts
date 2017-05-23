@@ -1,21 +1,14 @@
-import { Component, Input, Optional, Inject,Output,EventEmitter } from '@angular/core';
-import { Router }            from '@angular/router';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MdDialog } from '@angular/material';
 import {NotificationsService} from './angular2-notifications/simple-notifications.module';
-import { AceDialogComponent } from './ace-dialog.component';
-
-import { Observable }        from 'rxjs/Observable';
-import { Subject }           from 'rxjs/Subject';
-
-// Observable class extensions
-import 'rxjs/add/observable/of';
-
-import { Release } from './release';
-import { ReleaseService } from './release.service';
-
 import { AceEditorComponent } from 'ng2-ace-editor';
 import 'brace'
 import 'brace/mode/yaml'
+
+import { AceDialogComponent } from './ace-dialog.component';
+import { Release } from './release';
+import { ReleaseService } from './release.service';
+
 
 @Component({
   selector: 'release-controls',
@@ -53,7 +46,6 @@ export class ReleaseControlsComponent {
   }
 
   openEditDialog(rel: Release) {
-    console.log(rel);
     let configData = rel.config.raw ? rel.config.raw.trim():"";
     const dialogRef = this._dialog.open(AceDialogComponent, {
       data: {'config':configData, 'values':rel.chart.values.raw},

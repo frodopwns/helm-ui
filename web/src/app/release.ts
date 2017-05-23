@@ -8,7 +8,7 @@ export var STATUSES = [
   "DELETING"
 ];
 
-export class CTemplate {
+export class ChartTemplate {
   name: string;
   data: string;
 }
@@ -20,7 +20,7 @@ export class Metadata {
 
 export class Chart {
   metadata: Metadata;
-  templates: CTemplate[];
+  templates: ChartTemplate[];
   values: Values;
 }
 
