@@ -1,10 +1,7 @@
 
 md-list-item {
   cursor: pointer;
-  position: relative;
-  left: 0;
-  background-color: #EEE;
-  border: 1px solid black;
+
 }
 md-list-item:hover {
   background-color: #DDD;
