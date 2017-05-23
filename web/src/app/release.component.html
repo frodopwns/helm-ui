@@ -18,13 +18,6 @@
     </ng-template>
    <div *ngIf="releases" class='release-history'>
        <md-list dense>
-          <md-list-item>
-            <div fxFlex="10">#</div>
-            <div fxFlex="20">Updated</div>
-            <div fxFlex="15">State</div>
-            <div fxFlex="20">Description</div>
-            <div fxFlex="35"></div>
-          </md-list-item>
           <md-list-item *ngFor="let release of releases; let i = index">
             <div fxFlex="10">{{ i+1 }}</div>
             <div fxFlex="20">{{ release.info.last_deployed.seconds | unepoch }}</div>
