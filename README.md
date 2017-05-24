@@ -1,6 +1,6 @@
 HelmUI is a UI for interacting with helm releases from your browser.
 
-![screengrab](https://cloud.githubusercontent.com/assets/782143/26421345/fe331490-4082-11e7-8c62-4f5e40bd3d60.png)
+![screencast](https://cloud.githubusercontent.com/assets/782143/26423317/77effa3a-408a-11e7-9590-1e966d8ac27a.gif)
 
 
 ## Prerequisites
