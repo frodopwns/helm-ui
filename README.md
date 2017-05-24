@@ -1,4 +1,7 @@
-Nothing to see here. Just experimentation.
+HelmUI is a UI for interacting with helm releases from your browser.
+
+![screengrab](https://cloud.githubusercontent.com/assets/782143/26421345/fe331490-4082-11e7-8c62-4f5e40bd3d60.png)
+
 
 ## Prerequisites
 1. Kubernetes cluster
