@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { SearchService } from './search.service';
+import { Router }            from '@angular/router';
 
 @Component({
   selector: 'search',
   template: `
   <div>
     <md-input-container>
-      <input mdInput placeholder="search" #myInput (input)="send(myInput.value)" />
+      <input mdInput placeholder="search" [(ngModel)]='searchField' (input)="send()" />
       <span md-prefix>
         <md-icon>search</md-icon>
         &nbsp;
@@ -17,7 +18,7 @@ import { SearchService } from './search.service';
   styleUrls: ['./app.component.css'],
 })
 export class SearchComponent implements OnInit {
-  title = 'HelmUI';
+  searchField: string = '';
   public options = {
      position: ["top", "left"],
      timeOut: 5000,
@@ -25,14 +26,21 @@ export class SearchComponent implements OnInit {
      lastOnBottom: true,
   };
 
-  constructor(private search: SearchService) {}
+  constructor(
+    private search: SearchService,
+    private router: Router
+  ) {
+    router.events.subscribe((val) => {
+         this.searchField = '';
+    });
+  }
 
   ngOnInit() {
     console.log("search component init");
   }
 
-  send(terms: string): void {
+  send(): void {
     console.log("sending");
-    this.search.sendTerm(terms);
+    this.search.sendTerm(this.searchField);
   }
 }

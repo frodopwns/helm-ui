@@ -1,10 +1,9 @@
 <md-card *ngIf="release">
-    <release-controls class="release-view" [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+    <release-controls class="release-view" [ParentReleases]="releases" [release]="release" (deleteEvent)= "onDelete($event)" (editEvent)= "onChange($event)"></release-controls>
   <md-card-header>
     <md-card-title>
       {{release.name}} - ({{release.chart.metadata.name}}) <md-icon [style.color]="statusColor(release.info.status.code)" md-tooltip="{{release.info.status.code | status}}" class="status-flag">flag</md-icon>
     </md-card-title>
-    <md-spinner *ngIf="release.loading" color="accent" class="app-spinner"></md-spinner>
     <md-card-subtitle><label>namespace:</label>&nbsp;{{release.namespace}}&nbsp;<label>version:</label>&nbsp;{{release.version}}</md-card-subtitle>
   </md-card-header>
   <md-card-content >
@@ -30,7 +29,7 @@
                 </button>
               </div>
               <div fxFlex="50">
-                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="loading=true;rollback(release.name, i+1)">
+                <button color="primary" disabled="{{release.info.status.code == 1}}" md-button (click)="rollback(release.name, i+1)">
                   <md-icon>undo</md-icon> Rollback
                 </button>
               </div>

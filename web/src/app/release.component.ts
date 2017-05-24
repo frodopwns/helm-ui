@@ -1,13 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MdDialog } from '@angular/material';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Location }                 from '@angular/common';
+import { Router } from '@angular/router';
 
 import { Release, STATUSES } from './release';
 import { ReleaseService } from './release.service';
 
 import { AceDialogComponent } from './ace-dialog.component';
 import { DiffDialogComponent } from './diff-dialog.component';
+import { ActivityBarService } from './activity-bar.service';
 
 @Component({
   selector: 'release',
@@ -17,6 +19,9 @@ import { DiffDialogComponent } from './diff-dialog.component';
 export class ReleaseComponent implements OnInit {
   @Input() release: Release;
   @Input() releases: Release[];
+  @Output() editEvent:EventEmitter<Release>=new EventEmitter();
+  @Output() deleteEvent:EventEmitter<string>=new EventEmitter();
+
   showNotes: boolean;
   showHistory: boolean;
   dialogResp: string;
@@ -27,7 +32,9 @@ export class ReleaseComponent implements OnInit {
     private releaseService: ReleaseService,
     private _dialog: MdDialog,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private activity: ActivityBarService,
+    private router: Router
   ) { }
 
   initData(name: string): void {
@@ -59,36 +66,13 @@ export class ReleaseComponent implements OnInit {
 
   rollback(name: string, revision: number): void {
     if (!name || !revision) { return; }
+    this.setLoad(true);
     this.releaseService.rollback(name, revision)
       .then(release => {
-        console.log(release);
-        for (var i = 0; i < this.releases.length; i++) {
-          if (this.releases[i].name == release.name) {
-            this.releases[i] = release;
-          }
-        }
+        this.release = release;
+        this.setLoad(false);
+        this.editEvent.emit(release);
       });
-  }
-  openEditDialog(rel: Release) {
-    let configData = rel.config.raw ? rel.config.raw.trim():"";
-    const dialogRef = this._dialog.open(AceDialogComponent, {
-      data: {'config':configData, 'values':rel.chart.values.raw},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.dialogResp = result;
-      if (result) {
-        this.toggleLoad();
-
-        this.releaseService.updateValues(rel.name, result)
-          .then(release => {
-            for (var i = 0; i < this.releases.length; i++) {
-              if (this.releases[i].name == release.name) {
-                this.releases[i] = release;
-              }
-            }
-          });
-      }
-    })
   }
 
  getDiff(name: string, revision: number): void {
@@ -109,8 +93,13 @@ export class ReleaseComponent implements OnInit {
     })
   }
 
-  toggleLoad(): void {
-    this.loading = this.loading ? false: true; 
+  setLoad(on: boolean): void {
+    this.loading = on;
+    if (on) {
+      this.activity.setActivity("loading");
+    } else {
+      this.activity.setActivity("done");
+    }
   }
   toggleShowHistory(): void {
     this.showHistory = this.showHistory ? false:true;
@@ -140,10 +129,20 @@ export class ReleaseComponent implements OnInit {
     }
   }
 
-  onComponentChange(value: string){
-   console.log("I have a values!!!" + value);
-   //this.releases = this.releases.filter(rel => rel.name !== value)
-
+  onChange(value: Release){
+    this.release = value;
+    if (this.onRoute) {
+      this.getReleaseHistory(value.name);
+    } else {
+      this.editEvent.emit(value);
+    }
+  }
+  onDelete(value: string){
+    if (this.onRoute) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.deleteEvent.emit(value);
+    }
   }
   goBack(): void {
     if (this.onRoute) {

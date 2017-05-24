@@ -26,6 +26,9 @@ import { CompBarComponent } from './comp-bar.component';
 import { SearchComponent } from './search.component';
 import { SearchService } from './search.service';
 
+import { ActivityBarComponent } from './activity-bar.component';
+import { ActivityBarService } from './activity-bar.service';
+
 import { ReleaseControlsComponent } from './release-controls.component'; 
 import { SafePipe } from './safe.pipe';
 import { UnEpochPipe } from './unepoch.pipe';
@@ -60,14 +63,16 @@ import {AceEditorModule} from 'ng2-ace-editor';
     UnEpochPipe,
     StatusStringPipe,
     SafePipe,
-    SearchComponent
+    SearchComponent,
+    ActivityBarComponent
   ],
   providers: [ 
     ReleaseService,
     ChartRepoService,
     NotificationsService,
     Title,
-    SearchService
+    SearchService,
+    ActivityBarService
   ],
   entryComponents: [ AceDialogComponent, DiffDialogComponent ],
   bootstrap: [ AppComponent ]
