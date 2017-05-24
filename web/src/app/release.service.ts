@@ -3,14 +3,18 @@ import { Headers, Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import { APIURL } from './config/config';
 import {NotificationsService} from './angular2-notifications/simple-notifications.module';
+import { Subject }    from 'rxjs/Subject';
 
 import { Response } from './response';
 import { Release } from './release';
+
 
 @Injectable()
 export class ReleaseService {
 
   private releasesUrl = APIURL + '/releases';
+  private releaseSentSource = new Subject<Release>()
+  releaseSent$ = this.releaseSentSource.asObservable();
 
   constructor(
     private http: Http,
@@ -23,6 +27,10 @@ export class ReleaseService {
       message,
       { }
     );
+  }
+
+  sendRelease(rel: Release) {
+    this.releaseSentSource.next(rel);
   }
 
   getReleases(): Promise<Release[]> {

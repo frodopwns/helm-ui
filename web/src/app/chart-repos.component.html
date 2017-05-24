@@ -10,7 +10,6 @@
       <md-icon>add</md-icon>
     </button>
 
-
         <md-list>
           <md-list-item *ngFor="let repo of filtered"
               (click)="gotoDetail(repo)">
@@ -23,11 +22,9 @@
           </md-list-item>
         </md-list>
       </md-card-content>
-    </md-card>
-    <md-card>
-      <md-card-content>
+      <md-card-actions>
         <button md-button (click)="goBack()">
           <md-icon>arrow_back</md-icon> back
         </button>
-      </md-card-content>
+      </md-card-actions>
     </md-card>

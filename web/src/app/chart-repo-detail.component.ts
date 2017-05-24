@@ -6,11 +6,15 @@ import { Router }            from '@angular/router';
 import {NotificationsService} from './angular2-notifications/simple-notifications.module';
 import {Subscription} from "rxjs/Subscription";
 
+import { ActivityBarService } from './activity-bar.service';
+
 import { ChartRepoService } from './chart-repo.service';
 import { ChartRepo } from './chart-repo'
 import { Chart } from './chart'
 import { SearchService } from './search.service';
 import 'rxjs/add/operator/switchMap';
+import { ReleaseService } from './release.service';
+
 
 @Component({
   selector: 'chart-repo-detail',
@@ -24,6 +28,7 @@ export class ChartRepoDetailComponent implements OnInit {
     charts: Chart[];
     filtered: Chart[] = [];
     searcher: Subscription;
+    loading: boolean;
 
     constructor(
       private chartRepoService: ChartRepoService,
@@ -31,7 +36,9 @@ export class ChartRepoDetailComponent implements OnInit {
       private location: Location,
       private router: Router,
       private _notify: NotificationsService,
-      private search: SearchService
+      private search: SearchService,
+      private activity: ActivityBarService,
+      private releaseService: ReleaseService
     ) {
     this.searcher = search.searchSent$.subscribe(
       terms => {
@@ -64,14 +71,23 @@ export class ChartRepoDetailComponent implements OnInit {
       );
     }
 
-    toggleLoad(chart: Chart): void {
-      chart.loading = chart.loading ? false : true;
+    setLoad(on: boolean): void {
+      this.loading = on;
+      if (on) {
+        this.activity.setActivity("loading");
+      } else {
+        this.activity.setActivity("done");
+      }
     }
 
     install(name: string, repo: string): void {
+      this.setLoad(true);
+      this.router.navigate(['/dashboard']);
       this.chartRepoService.install(name, repo)
         .then(release => {
-          this.router.navigate(['/dashboard']);
+          this.setLoad(false);
+          
+          this.releaseService.sendRelease(release);
           this.noteSuccess(`${name} installed successfully.`);
         });
     }

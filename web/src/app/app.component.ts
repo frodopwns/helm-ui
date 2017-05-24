@@ -22,6 +22,7 @@ import 'rxjs/add/operator/mergeMap';
        <span fxFlex="60"></span>
         <span fxFlex="20"><search></search></span>
       </md-toolbar>
+      <activity-bar></activity-bar>
     
   <simple-notifications [options]="options"></simple-notifications>
   <router-outlet></router-outlet>

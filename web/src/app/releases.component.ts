@@ -22,6 +22,7 @@ export class ReleasesComponent implements OnInit {
   selectedRelease: Release;
   watcher: Subscription;
   searcher: Subscription;
+  relWatch: Subscription;
   activeMediaQuery: string = "";
   extraSmall: boolean;
   showListPane: boolean = true;
@@ -47,7 +48,22 @@ export class ReleasesComponent implements OnInit {
     this.searcher = search.searchSent$.subscribe(
       terms => {
         this.filterReleases(terms);
-      });
+    });
+
+    this.relWatch = releaseService.releaseSent$.subscribe(
+      rel => {
+        let found = false;
+        for (var i=0; i < this.releases.length; i++) {
+          if (this.releases[i].name == rel.name) {
+            found = true;
+            this.releases[i] = rel
+          }
+        }
+        if (!found) {
+          this.releases.push(rel);
+          this.filtered = Object.assign([], this.releases);
+        }
+    });
   }
 
   ngOnDestroy() {
@@ -133,9 +149,25 @@ export class ReleasesComponent implements OnInit {
     this.extraSmall = true;
   }
 
-  onComponentChange(value: string){
+  onDeleteEvent(value: string){
    this.releases = this.releases.filter(rel => rel.name !== value)
-   this.selectedRelease = this.releases[0];
+   if (this.selectedRelease.name == value) {
+     this.selectedRelease = this.releases[0];
+   }
+   this.filtered = Object.assign([], this.releases)
+  }
+
+  onEditEvent(rel: Release) {
+    for (var i = 0; i < this.releases.length; i++) {
+      if (this.releases[i].name == rel.name) {
+        this.releases[i] = rel;
+      }
+    }
+    this.filtered = Object.assign([], this.releases)
+
+    if (this.selectedRelease.name == rel.name) {
+      this.selectedRelease = rel;
+    }
   }
 
 }

@@ -7,11 +7,10 @@
     <img md-card-img src="{{chart.icon}}" />
     <md-card-content>
       <p>{{ chart.description }} </p>
-      <md-spinner *ngIf="chart.loading" color="accent" class="app-spinner"></md-spinner>
     </md-card-content>
     <md-card-actions>
       <button md-button class="install"
-        (click)="toggleLoad(chart); install(chart.name, repo)"><md-icon>get_app</md-icon> install</button>
+        (click)="install(chart.name, repo)"><md-icon>get_app</md-icon> install</button>
     </md-card-actions>
   </md-card>
 

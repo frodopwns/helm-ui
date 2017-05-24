@@ -45,13 +45,13 @@
             {{release.version}}
           </div>
           <div fxFlex="4">
-            <release-controls [ParentReleases]="releases" [release]="release" (outputEvent)= "onComponentChange($event)"></release-controls>
+            <release-controls [ParentReleases]="releases" [release]="release" (editEvent)="onEditEvent($event)" (deleteEvent)= "onDeleteEvent($event)"></release-controls>
           </div>
         </md-list-item>
       </md-list>
     </div>
     <div *ngIf="showRelPane" fxFlex="50" [fxHide]="showReleasePane()">
-        <release *ngIf="selectedRelease" [release]="selectedRelease" [releases]="releases"></release>
+        <release *ngIf="selectedRelease" [release]="selectedRelease" [releases]="releases" (editEvent)="onEditEvent($event)" (deleteEvent)= "onDeleteEvent($event)"></release>
     </div>
   </div>
 </div>

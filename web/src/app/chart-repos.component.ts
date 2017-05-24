@@ -66,6 +66,7 @@ export class ChartReposComponent implements OnInit {
       .then(repo => {
         if (!this.repos) this.repos = [];
         this.repos.push(repo);
+        this.filtered = Object.assign([], this.repos);
       });
   }
 
@@ -75,6 +76,7 @@ export class ChartReposComponent implements OnInit {
     this.chartRepoService.delete(name)
       .then(repo => {
         this.repos = this.repos.filter(rep => rep.name !== name)
+        this.filtered = Object.assign([], this.repos);
       });
   }
 

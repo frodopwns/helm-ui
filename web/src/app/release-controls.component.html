@@ -6,11 +6,9 @@
     <md-icon>edit</md-icon>
     <span>Edit</span>
   </button>
-  <button color="primary" md-menu-item (click)="toggleLoad(); $event.stopPropagation(); delete();">
+  <button color="primary" md-menu-item (click)="$event.stopPropagation(); delete();">
     <md-icon>delete</md-icon>
     <span>Delete</span>
   </button>
 </md-menu>
 
-
-<md-spinner *ngIf="loading" color="primary" class="app-spinner"></md-spinner>
